@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>💎 CRYSTΔL | لوحة الأدمن</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root{--glass:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--accent:#6366f1;--accent2:#06b6d4;--bg:#050510}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;min-height:100vh;padding:16px;overflow-y:auto}
+        .header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+        .btn-back{background:rgba(255,255,255,0.08);border:1px solid var(--border);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:18px}
+        h1{font-size:24px;font-weight:800;background:linear-gradient(to bottom,#fff,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:16px;backdrop-filter:blur(20px)}
+        .card h3{color:#a5b4fc;margin-bottom:12px;font-size:16px}
+        .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+        .stat-box{background:rgba(0,0,0,0.3);border-radius:10px;padding:10px;text-align:center}
+        .stat-num{font-size:22px;font-weight:700;color:#a5b4fc}
+        .stat-label{font-size:10px;opacity:0.5;margin-top:2px}
+        .list{max-height:300px;overflow-y:auto}
+        .item{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.3);padding:10px;border-radius:12px;margin-bottom:6px;gap:10px}
+        .item-info{display:flex;align-items:center;gap:8px;overflow:hidden}
+        .item-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0}
+        .item-avatar img{width:100%;height:100%;object-fit:cover}
+        .item-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .btn-sm{padding:6px 14px;border-radius:20px;font-size:11px;cursor:pointer;border:none;font-weight:600}
+        .btn-verify{background:rgba(251,191,36,0.2);color:#fbbf24}
+        .btn-delete{background:rgba(239,68,68,0.2);color:#f87171}
+        .btn-ban{background:rgba(239,68,68,0.2);color:#f87171}
+        .btn-unban{background:rgba(34,197,94,0.2);color:#4ade80}
+        .spinner{width:32px;height:32px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:30px auto}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .load-center{display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column;gap:12px;color:rgba(255,255,255,0.5)}
+    </style>
+</head>
+<body>
+<div class="load-center" id="loader"><div class="spinner"></div><span>💎 تحميل لوحة الأدمن...</span></div>
+<div id="content" style="display:none">
+    <div class="header"><button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-right"></i></button><h1>🛡️ لوحة الأدمن</h1></div>
+    <div id="adminContent"></div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script>
+    const ADMIN_EMAILS=['jasim28v@gmail.com'];
+    let currentUser=null;
+    
+    auth.onAuthStateChanged(async u=>{
+        if(!u){window.location.href='auth.html';return}
+        currentUser=u;
+        if(!ADMIN_EMAILS.includes(u.email)){alert('غير مصرح');window.location.href='index.html';return}
+        await loadAdmin();
+        document.getElementById('loader').style.display='none';
+        document.getElementById('content').style.display='block';
+    });
+    
+    async function loadAdmin(){
+        const us=await db.ref('users').once('value');const users=us.val()||{};
+        const vs=await db.ref('videos').once('value');const videos=vs.val()||{};
+        const tl=Object.values(videos).reduce((s,v)=>s+(v.likes||0),0);
+        const bu=Object.values(users).filter(u=>u.banned).length;
+        const vu=Object.values(users).filter(u=>u.isVerified).length;
+        document.getElementById('adminContent').innerHTML=`
+            <div class="card">
+                <h3>📊 إحصائيات</h3>
+                <div class="stats">
+                    <div class="stat-box"><div class="stat-num">${Object.keys(users).length}</div><div class="stat-label">مستخدمين</div></div>
+                    <div class="stat-box"><div class="stat-num">${Object.keys(videos).length}</div><div class="stat-label">فيديوهات</div></div>
+                    <div class="stat-box"><div class="stat-num">${tl}</div><div class="stat-label">إعجابات</div></div>
+                    <div class="stat-box"><div class="stat-num">${bu}</div><div class="stat-label">محظورين</div></div>
+                    <div class="stat-box"><div class="stat-num">${vu}</div><div class="stat-label">موثقين</div></div>
+                </div>
+            </div>
+            <div class="card"><h3>✅ توثيق الحسابات</h3><div class="list">${Object.entries(users).slice(0,20).map(([id,u])=>`<div class="item"><div class="item-info"><div class="item-avatar"><img src="${u.avatarUrl||(DICEBEAR_URL+'?seed='+id)}"></div><div class="item-name">@${u.username||'?'} ${u.isVerified?'<span style="color:#a5b4fc">✅</span>':''}</div></div><button class="btn-sm btn-verify" onclick="toggleV('${id}')">${u.isVerified?'إلغاء':'توثيق'}</button></div>`).join('')}</div></div>
+            <div class="card"><h3>🗑️ حذف فيديوهات</h3><div class="list">${Object.entries(videos).reverse().slice(0,15).map(([id,v])=>`<div class="item"><div class="item-info"><i class="fas fa-video"></i><span style="font-size:13px">${(v.description||'فيديو').substring(0,35)}</span></div><button class="btn-sm btn-delete" onclick="delV('${id}')">حذف</button></div>`).join('')}</div></div>
+            <div class="card"><h3>👥 إدارة المستخدمين</h3><div class="list">${Object.entries(users).slice(0,15).map(([id,u])=>`<div class="item"><div class="item-info"><div class="item-avatar"><img src="${u.avatarUrl||(DICEBEAR_URL+'?seed='+id)}"></div><div class="item-name">@${u.username||'?'} ${u.banned?'<span style="background:#ef4444;padding:1px 6px;border-radius:8px;font-size:9px">محظور</span>':''} ${u.isVerified?'<span style="color:#a5b4fc">✅</span>':''}</div></div><div>${u.banned?`<button class="btn-sm btn-unban" onclick="unban('${id}')">إلغاء الحظر</button>`:`<button class="btn-sm btn-ban" onclick="ban('${id}')">حظر</button>`}<button class="btn-sm btn-delete" style="margin-right:4px" onclick="delU('${id}')">حذف</button></div></div>`).join('')}</div></div>`;
+        window.toggleV=async(id)=>{if(confirm('تأكيد؟')){const r=await db.ref('users/'+id).once('value');const d=r.val();await db.ref('users/'+id).update({isVerified:!d.isVerified});alert('✅');loadAdmin()}};
+        window.delV=async(id)=>{if(confirm('حذف الفيديو؟')){await db.ref('videos/'+id).remove();alert('✅');loadAdmin()}};
+        window.ban=async(id)=>{if(confirm('حظر المستخدم؟')){await db.ref('users/'+id+'/banned').set(true);alert('✅');loadAdmin()}};
+        window.unban=async(id)=>{if(confirm('إلغاء الحظر؟')){await db.ref('users/'+id+'/banned').remove();alert('✅');loadAdmin()}};
+        window.delU=async(id)=>{if(confirm('حذف المستخدم؟')){await db.ref('users/'+id).remove();const vs=await db.ref('videos').once('value');Object.entries(vs.val()||{}).forEach(([k,v])=>{if(v.sender===id)db.ref('videos/'+k).remove()});alert('✅');loadAdmin()}};
+    }
+</script>
+</body>
+</html>
