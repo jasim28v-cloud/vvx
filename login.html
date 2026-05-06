@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BLU3Y | تسجيل الدخول</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a2463, #1e3a8a, #3b82f6, #60a5fa);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* جزيئات عائمة */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            animation: floatUp 8s infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+        
+        /* بطاقة زجاجية */
+        .glass-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 40px;
+            padding: 40px 32px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+            animation: cardEntry 0.8s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+        @keyframes cardEntry {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .glass-card h1 {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        .glass-card .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            margin-bottom: 32px;
+        }
+        .glass-input {
+            width: 100%;
+            padding: 16px 20px;
+            margin: 10px 0;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            font-size: 15px;
+            transition: all 0.4s;
+            outline: none;
+        }
+        .glass-input:focus {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
+        }
+        .glass-input::placeholder { color: rgba(255,255,255,0.4); }
+        .glass-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            letter-spacing: 1px;
+        }
+        .glass-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+        }
+        .glass-btn:active { transform: scale(0.98); }
+        .link-text {
+            text-align: center;
+            margin-top: 24px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+        .link-text a {
+            color: #93c5fd;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .link-text a:hover { color: #fff; }
+        .error-msg {
+            text-align: center;
+            color: #fca5a5;
+            font-size: 13px;
+            margin-top: 12px;
+            min-height: 20px;
+        }
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: bounce 0.5s infinite alternate;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes bounce {
+            to { transform: translateY(-8px); opacity: 0.5; }
+        }
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="glass-card">
+        <div class="logo-icon">💎</div>
+        <h1>BLU3Y</h1>
+        <p class="subtitle">TikTok Glass Ultra Pro</p>
+        <input type="email" id="loginEmail" class="glass-input" placeholder="📧 البريد الإلكتروني">
+        <input type="password" id="loginPassword" class="glass-input" placeholder="🔒 كلمة المرور">
+        <button class="glass-btn" onclick="login()">
+            <span id="loginBtnText">دخول</span>
+            <span id="loginBtnLoader" style="display:none">
+                <span class="loading-dots"><span></span><span></span><span></span></span>
+            </span>
+        </button>
+        <div class="error-msg" id="loginMsg"></div>
+        <div class="link-text">
+            ليس لديك حساب؟ <a href="signup.html">إنشاء حساب جديد</a>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        // جزيئات عائمة
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 8 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (Math.random() * 6 + 6) + 's';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // تسجيل الدخول
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const msg = document.getElementById('loginMsg');
+            const btnText = document.getElementById('loginBtnText');
+            const btnLoader = document.getElementById('loginBtnLoader');
+            
+            if (!email || !password) { msg.innerText = 'الرجاء ملء جميع الحقول'; return; }
+            
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            msg.innerText = '';
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                window.location.href = 'index.html';
+            } catch (error) {
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                if (error.code === 'auth/user-not-found') msg.innerText = '❌ لا يوجد حساب بهذا البريد';
+                else if (error.code === 'auth/wrong-password') msg.innerText = '❌ كلمة المرور غير صحيحة';
+                else if (error.code === 'auth/invalid-email') msg.innerText = '❌ بريد إلكتروني غير صالح';
+                else msg.innerText = '❌ حدث خطأ، حاول مرة أخرى';
+            }
+        }
+
+        document.querySelectorAll('.glass-input').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') login();
+            });
+        });
+    </script>
+</body>
+</html>
