@@ -67,70 +67,239 @@
         }
         button:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(99,102,241,0.4)}
         button:active{transform:scale(0.97)}
+        button:disabled{opacity:0.5;pointer-events:none}
         .msg{text-align:center;color:#fca5a5;font-size:13px;margin-top:12px;min-height:20px}
+        .msg.success{color:#4ade80}
+        .spinner-inline{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;margin-left:8px;vertical-align:middle}
+        @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
-    <div class="bg-orb"></div><div class="bg-orb"></div><div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    
     <div class="card">
         <div class="logo">💎</div>
         <h1>CRYSTΔL</h1>
         <p class="sub">TikTok 2026 Ultra Pro</p>
+        
         <div class="tabs">
             <button class="tab active" onclick="switchTab('login')">دخول</button>
             <button class="tab" onclick="switchTab('register')">اشتراك</button>
         </div>
+        
+        <!-- نموذج تسجيل الدخول -->
         <div id="formLogin" class="form active">
-            <input type="email" id="loginEmail" placeholder="📧 البريد الإلكتروني">
-            <input type="password" id="loginPass" placeholder="🔒 كلمة المرور">
-            <button onclick="doLogin()">🚀 تسجيل الدخول</button>
+            <input type="email" id="loginEmail" placeholder="📧 البريد الإلكتروني" autocomplete="email">
+            <input type="password" id="loginPass" placeholder="🔒 كلمة المرور" autocomplete="current-password">
+            <button id="btnLogin" onclick="doLogin()">🚀 تسجيل الدخول</button>
             <div class="msg" id="loginMsg"></div>
         </div>
+        
+        <!-- نموذج الاشتراك -->
         <div id="formRegister" class="form">
-            <input type="text" id="regName" placeholder="👤 اسم المستخدم">
-            <input type="email" id="regEmail" placeholder="📧 البريد الإلكتروني">
-            <input type="password" id="regPass" placeholder="🔒 كلمة المرور (6 أحرف)">
-            <button onclick="doRegister()">🎨 إنشاء حساب</button>
+            <input type="text" id="regName" placeholder="👤 اسم المستخدم" autocomplete="username">
+            <input type="email" id="regEmail" placeholder="📧 البريد الإلكتروني" autocomplete="email">
+            <input type="password" id="regPass" placeholder="🔒 كلمة المرور (6 أحرف على الأقل)" autocomplete="new-password">
+            <button id="btnRegister" onclick="doRegister()">🎨 إنشاء حساب</button>
             <div class="msg" id="regMsg"></div>
         </div>
     </div>
+
     <script src="firebase-config.js"></script>
     <script>
+        // ========== تبديل التبويبات ==========
         function switchTab(type){
-            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            document.querySelectorAll('.form').forEach(f=>f.classList.remove('active'));
-            document.getElementById('form'+(type==='login'?'Login':'Register')).classList.add('active');
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            document.getElementById('form' + (type === 'login' ? 'Login' : 'Register')).classList.add('active');
+            
+            // مسح الرسائل
+            document.getElementById('loginMsg').innerText = '';
+            document.getElementById('regMsg').innerText = '';
         }
+        
+        // ========== تسجيل الدخول ==========
         async function doLogin(){
-            const e=document.getElementById('loginEmail').value,p=document.getElementById('loginPass').value,m=document.getElementById('loginMsg');
-            if(!e||!p){m.innerText='املأ جميع الحقول';return}
-            m.innerText='';
-            try{await auth.signInWithEmailAndPassword(e,p);location.replace('index.html')}
-            catch(err){m.innerText='❌ بيانات غير صحيحة'}
-        }
-        async function doRegister(){
-            const u=document.getElementById('regName').value,e=document.getElementById('regEmail').value,p=document.getElementById('regPass').value,m=document.getElementById('regMsg');
-            if(!u||!e||!p){m.innerText='املأ جميع الحقول';return}
-            if(p.length<6){m.innerText='❌ كلمة المرور 6 أحرف على الأقل';return}
-            m.innerText='';
-            try{
-                const uc=await auth.createUserWithEmailAndPassword(e,p);
-                const avatarUrl=DICEBEAR_URL+'?seed='+uc.user.uid;
-                const coverColor=COVER_COLORS[Math.floor(Math.random()*COVER_COLORS.length)];
-                await db.ref('users/'+uc.user.uid).set({
-                    username:u,email:e,bio:'',avatarUrl:avatarUrl,
-                    hasCustomAvatar:false,coverColor:coverColor,
-                    followers:{},following:{},totalLikes:0,
-                    isVerified:false,createdAt:Date.now()
-                });
-                location.replace('index.html');
-            }catch(err){
-                if(err.code==='auth/email-already-in-use')m.innerText='❌ البريد مستخدم بالفعل';
-                else m.innerText='❌ حدث خطأ';
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPass').value;
+            const msg = document.getElementById('loginMsg');
+            const btn = document.getElementById('btnLogin');
+            
+            if(!email || !password){
+                msg.innerText = '❌ الرجاء ملء جميع الحقول';
+                return;
+            }
+            
+            msg.innerText = '';
+            msg.className = 'msg';
+            btn.disabled = true;
+            btn.innerHTML = '⏳ جاري الدخول...<span class="spinner-inline"></span>';
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                console.log('✅ Login successful');
+                window.location.replace('index.html');
+            } catch(error) {
+                console.error('Login error:', error.code, error.message);
+                btn.disabled = false;
+                btn.innerHTML = '🚀 تسجيل الدخول';
+                msg.className = 'msg';
+                
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        msg.innerText = '❌ لا يوجد حساب بهذا البريد';
+                        break;
+                    case 'auth/wrong-password':
+                        msg.innerText = '❌ كلمة المرور غير صحيحة';
+                        break;
+                    case 'auth/invalid-email':
+                        msg.innerText = '❌ بريد إلكتروني غير صالح';
+                        break;
+                    case 'auth/too-many-requests':
+                        msg.innerText = '❌ محاولات كثيرة، حاول لاحقاً';
+                        break;
+                    default:
+                        msg.innerText = '❌ خطأ: ' + error.message;
+                }
             }
         }
-        document.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){if(document.getElementById('formLogin').classList.contains('active'))doLogin();else doRegister()}}));
+        
+        // ========== إنشاء حساب ==========
+        async function doRegister(){
+            const username = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPass').value;
+            const msg = document.getElementById('regMsg');
+            const btn = document.getElementById('btnRegister');
+            
+            // التحقق من الحقول
+            if(!username || !email || !password){
+                msg.innerText = '❌ الرجاء ملء جميع الحقول';
+                msg.className = 'msg';
+                return;
+            }
+            
+            if(username.length < 3){
+                msg.innerText = '❌ اسم المستخدم 3 أحرف على الأقل';
+                msg.className = 'msg';
+                return;
+            }
+            
+            if(password.length < 6){
+                msg.innerText = '❌ كلمة المرور 6 أحرف على الأقل';
+                msg.className = 'msg';
+                return;
+            }
+            
+            if(!email.includes('@') || !email.includes('.')){
+                msg.innerText = '❌ بريد إلكتروني غير صالح';
+                msg.className = 'msg';
+                return;
+            }
+            
+            msg.innerText = '';
+            msg.className = 'msg';
+            btn.disabled = true;
+            btn.innerHTML = '⏳ جاري الإنشاء...<span class="spinner-inline"></span>';
+            
+            try {
+                // الخطوة 1: إنشاء حساب Firebase
+                console.log('🟡 Creating auth account...');
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const uid = userCredential.user.uid;
+                console.log('✅ Auth account created:', uid);
+                
+                // الخطوة 2: تجهيز بيانات المستخدم
+                const avatarUrl = DICEBEAR_URL + '?seed=' + uid;
+                const coverColor = COVER_COLORS[Math.floor(Math.random() * COVER_COLORS.length)];
+                
+                const userData = {
+                    username: username,
+                    email: email,
+                    bio: '',
+                    avatarUrl: avatarUrl,
+                    hasCustomAvatar: false,
+                    coverColor: coverColor,
+                    followers: {},
+                    following: {},
+                    totalLikes: 0,
+                    isVerified: false,
+                    verifiedAt: null,
+                    verifiedBy: null,
+                    createdAt: Date.now()
+                };
+                
+                // الخطوة 3: حفظ البيانات في Firebase
+                console.log('🟡 Saving user data...');
+                try {
+                    await db.ref('users/' + uid).set(userData);
+                    console.log('✅ User data saved successfully');
+                } catch(dbError) {
+                    console.error('❌ Database save error:', dbError);
+                    // إذا فشل حفظ البيانات، نحذف حساب المصادقة
+                    await userCredential.user.delete();
+                    throw new Error('فشل حفظ بيانات المستخدم');
+                }
+                
+                // الخطوة 4: نجاح - انتقال للرئيسية
+                msg.innerText = '✅ تم إنشاء الحساب بنجاح!';
+                msg.className = 'msg success';
+                
+                setTimeout(() => {
+                    window.location.replace('index.html');
+                }, 500);
+                
+            } catch(error) {
+                console.error('❌ Registration error:', error.code, error.message);
+                btn.disabled = false;
+                btn.innerHTML = '🎨 إنشاء حساب';
+                msg.className = 'msg';
+                
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        msg.innerText = '❌ البريد الإلكتروني مستخدم بالفعل';
+                        break;
+                    case 'auth/weak-password':
+                        msg.innerText = '❌ كلمة المرور ضعيفة جداً (6 أحرف على الأقل)';
+                        break;
+                    case 'auth/invalid-email':
+                        msg.innerText = '❌ بريد إلكتروني غير صالح';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        msg.innerText = '❌ التسجيل غير مفعل في Firebase';
+                        break;
+                    default:
+                        msg.innerText = '❌ خطأ: ' + (error.message || 'حدث خطأ غير معروف');
+                }
+            }
+        }
+        
+        // ========== دعم زر Enter ==========
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if(e.key === 'Enter') {
+                    e.preventDefault();
+                    if(document.getElementById('formLogin').classList.contains('active')) {
+                        doLogin();
+                    } else {
+                        doRegister();
+                    }
+                }
+            });
+        });
+        
+        // ========== التحقق من حالة المستخدم ==========
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                console.log('🟢 User already logged in, redirecting...');
+                window.location.replace('index.html');
+            }
+        });
+        
+        console.log('💎 CRYSTΔL Auth Page Ready');
     </script>
 </body>
 </html>
