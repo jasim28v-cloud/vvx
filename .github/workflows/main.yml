@@ -1,0 +1,44 @@
+name: 💙 BLU3Y Glass Deploy
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 سحب المستودع
+        uses: actions/checkout@v4
+      
+      - name: 🐍 إعداد Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: 🔧 تشغيل scraper.py لتوليد الملفات
+        run: python scraper.py
+      
+      - name: 📋 عرض الملفات المنشأة
+        run: |
+          echo "===== الملفات المنشأة ====="
+          ls -la *.html *.js 2>/dev/null
+      
+      - name: 🚀 رفع الملفات إلى GitHub
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "💙 BLU3Y Glass Auto Deploy"
+          commit_author: "BLU3Y Bot <actions@github.com>"
+          file_pattern: '*.html *.js'
+          push_options: '--force'
+      
+      - name: ✅ اكتمل
+        run: |
+          echo "============================================"
+          echo "  💙 BLU3Y Glass System Deployed!"
+          echo "============================================"
