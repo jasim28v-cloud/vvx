@@ -10,127 +10,134 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{
-            min-height:100vh;
-            background:radial-gradient(ellipse at top, #1a1a2e, #0f0f1a, #000);
-            display:flex;align-items:center;justify-content:center;
-            font-family:'Segoe UI',sans-serif;overflow:hidden;
-        }
-        .bg-orb{
-            position:fixed;border-radius:50%;filter:blur(130px);opacity:0.35;
-            animation:orbFloat 20s infinite alternate;
-        }
+        body{min-height:100vh;background:radial-gradient(ellipse at top, #1a1a2e, #0f0f1a, #000);display:flex;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;overflow:hidden}
+        .bg-orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.35;animation:orbFloat 20s infinite alternate}
         .bg-orb:nth-child(1){width:400px;height:400px;background:#6366f1;top:-100px;left:-100px}
         .bg-orb:nth-child(2){width:350px;height:350px;background:#06b6d4;bottom:-100px;right:-100px;animation-delay:5s}
-        .bg-orb:nth-child(3){width:300px;height:300px;background:#8b5cf6;top:50%;left:50%;animation-delay:10s}
         @keyframes orbFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(50px,-50px) scale(1.3)}}
-        .card{
-            position:relative;z-index:1;width:90%;max-width:410px;
-            background:rgba(255,255,255,0.03);
-            backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
-            border-radius:32px;padding:36px 24px;
-            border:1px solid rgba(255,255,255,0.1);
-            box-shadow:0 30px 70px rgba(0,0,0,0.5),inset 0 0 30px rgba(255,255,255,0.02);
-            animation:fadeUp 0.8s ease;
-        }
+        .card{position:relative;z-index:1;width:90%;max-width:410px;background:rgba(255,255,255,0.03);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:32px;padding:36px 24px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 30px 70px rgba(0,0,0,0.5);animation:fadeUp 0.8s ease}
         @keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-        .logo{
-            width:70px;height:70px;margin:0 auto 20px;
-            background:linear-gradient(135deg, rgba(99,102,241,0.3), rgba(6,182,212,0.3));
-            border-radius:20px;display:flex;align-items:center;justify-content:center;
-            font-size:36px;border:1px solid rgba(255,255,255,0.15);
-            box-shadow:0 15px 40px rgba(99,102,241,0.2);
-        }
+        .logo{width:70px;height:70px;margin:0 auto 20px;background:linear-gradient(135deg, rgba(99,102,241,0.3), rgba(6,182,212,0.3));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;border:1px solid rgba(255,255,255,0.15);box-shadow:0 15px 40px rgba(99,102,241,0.2)}
         h1{text-align:center;font-size:36px;font-weight:900;background:linear-gradient(to bottom, #fff, #a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
         .sub{text-align:center;color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:20px}
         .tabs{display:flex;gap:4px;background:rgba(255,255,255,0.04);border-radius:40px;padding:4px;margin-bottom:24px}
         .tab{flex:1;padding:12px;background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;border-radius:40px;font-size:14px;transition:all 0.3s;font-weight:500}
-        .tab.active{background:linear-gradient(135deg, #6366f1, #06b6d4);color:#fff;box-shadow:0 8px 20px rgba(99,102,241,0.3)}
-        .form{display:none;animation:fadeIn 0.4s ease}
+        .tab.active{background:linear-gradient(135deg, #6366f1, #06b6d4);color:#fff}
+        .form{display:none}
         .form.active{display:block}
-        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-        input{
-            width:100%;padding:15px 18px;margin:8px 0;
-            border-radius:50px;background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.1);color:#fff;
-            font-size:14px;outline:none;transition:all 0.4s;
-        }
-        input:focus{border-color:rgba(99,102,241,0.6);box-shadow:0 0 20px rgba(99,102,241,0.1);background:rgba(255,255,255,0.07)}
+        input{width:100%;padding:15px 18px;margin:8px 0;border-radius:50px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:14px;outline:none;transition:all 0.4s}
+        input:focus{border-color:rgba(99,102,241,0.6);background:rgba(255,255,255,0.07)}
         input::placeholder{color:rgba(255,255,255,0.3)}
-        button{
-            width:100%;padding:15px;margin-top:18px;
-            background:linear-gradient(135deg, #6366f1, #06b6d4);
-            border:none;border-radius:50px;color:#fff;
-            font-weight:bold;font-size:15px;cursor:pointer;
-            box-shadow:0 10px 30px rgba(99,102,241,0.3);
-            transition:all 0.3s;
-        }
-        button:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(99,102,241,0.4)}
-        button:active{transform:scale(0.97)}
+        button{width:100%;padding:15px;margin-top:18px;background:linear-gradient(135deg, #6366f1, #06b6d4);border:none;border-radius:50px;color:#fff;font-weight:bold;font-size:15px;cursor:pointer;transition:all 0.3s;box-shadow:0 10px 30px rgba(99,102,241,0.3)}
+        button:hover{transform:translateY(-2px)}
+        button:disabled{opacity:0.5;pointer-events:none}
         .msg{text-align:center;color:#fca5a5;font-size:13px;margin-top:12px;min-height:20px}
+        .msg.success{color:#4ade80}
     </style>
 </head>
 <body>
-    <div class="bg-orb"></div><div class="bg-orb"></div><div class="bg-orb"></div>
-    <div class="card">
-        <div class="logo">💎</div>
-        <h1>CRYSTΔL</h1>
-        <p class="sub">TikTok 2026 Ultra Pro</p>
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('login')">دخول</button>
-            <button class="tab" onclick="switchTab('register')">اشتراك</button>
-        </div>
-        <div id="formLogin" class="form active">
-            <input type="email" id="loginEmail" placeholder="📧 البريد الإلكتروني">
-            <input type="password" id="loginPass" placeholder="🔒 كلمة المرور">
-            <button onclick="doLogin()">🚀 تسجيل الدخول</button>
-            <div class="msg" id="loginMsg"></div>
-        </div>
-        <div id="formRegister" class="form">
-            <input type="text" id="regName" placeholder="👤 اسم المستخدم">
-            <input type="email" id="regEmail" placeholder="📧 البريد الإلكتروني">
-            <input type="password" id="regPass" placeholder="🔒 كلمة المرور (6 أحرف)">
-            <button onclick="doRegister()">🎨 إنشاء حساب</button>
-            <div class="msg" id="regMsg"></div>
-        </div>
+<div class="bg-orb"></div><div class="bg-orb"></div>
+<div class="card">
+    <div class="logo">💎</div>
+    <h1>CRYSTΔL</h1>
+    <p class="sub">TikTok 2026 Ultra Pro</p>
+    <div class="tabs">
+        <button class="tab active" id="tabLogin" onclick="switchTab('login')">دخول</button>
+        <button class="tab" id="tabRegister" onclick="switchTab('register')">اشتراك</button>
     </div>
-    <script src="firebase-config.js"></script>
-    <script>
-        function switchTab(type){
-            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-            event.target.classList.add('active');
-            document.querySelectorAll('.form').forEach(f=>f.classList.remove('active'));
-            document.getElementById('form'+(type==='login'?'Login':'Register')).classList.add('active');
+    <div id="formLogin" class="form active">
+        <input type="email" id="loginEmail" placeholder="📧 البريد الإلكتروني" autocomplete="email">
+        <input type="password" id="loginPass" placeholder="🔒 كلمة المرور" autocomplete="current-password">
+        <button id="btnLogin" onclick="doLogin()">🚀 تسجيل الدخول</button>
+        <div class="msg" id="loginMsg"></div>
+    </div>
+    <div id="formRegister" class="form">
+        <input type="text" id="regName" placeholder="👤 اسم المستخدم" autocomplete="username">
+        <input type="email" id="regEmail" placeholder="📧 البريد الإلكتروني" autocomplete="email">
+        <input type="password" id="regPass" placeholder="🔒 كلمة المرور (6 أحرف)" autocomplete="new-password">
+        <button id="btnRegister" onclick="doRegister()">🎨 إنشاء حساب</button>
+        <div class="msg" id="regMsg"></div>
+    </div>
+</div>
+<script src="firebase-config.js"></script>
+<script>
+    // ========== SWITCH TAB (تم التصحيح) ==========
+    function switchTab(type){
+        document.getElementById('tabLogin').classList.remove('active');
+        document.getElementById('tabRegister').classList.remove('active');
+        document.getElementById('formLogin').classList.remove('active');
+        document.getElementById('formRegister').classList.remove('active');
+        document.getElementById('loginMsg').innerText='';
+        document.getElementById('regMsg').innerText='';
+        if(type==='login'){
+            document.getElementById('tabLogin').classList.add('active');
+            document.getElementById('formLogin').classList.add('active');
+        } else {
+            document.getElementById('tabRegister').classList.add('active');
+            document.getElementById('formRegister').classList.add('active');
         }
-        async function doLogin(){
-            const e=document.getElementById('loginEmail').value,p=document.getElementById('loginPass').value,m=document.getElementById('loginMsg');
-            if(!e||!p){m.innerText='املأ جميع الحقول';return}
-            m.innerText='';
-            try{await auth.signInWithEmailAndPassword(e,p);location.replace('index.html')}
-            catch(err){m.innerText='❌ بيانات غير صحيحة'}
+    }
+    
+    // ========== LOGIN ==========
+    async function doLogin(){
+        const e=document.getElementById('loginEmail').value.trim();
+        const p=document.getElementById('loginPass').value;
+        const m=document.getElementById('loginMsg');
+        const b=document.getElementById('btnLogin');
+        if(!e||!p){m.innerText='❌ املأ جميع الحقول';return}
+        b.disabled=true;b.innerHTML='⏳ جاري الدخول...';m.innerText='';
+        try{
+            await auth.signInWithEmailAndPassword(e,p);
+            window.location.replace('index.html');
+        }catch(err){
+            b.disabled=false;b.innerHTML='🚀 تسجيل الدخول';
+            if(err.code==='auth/wrong-password'||err.code==='auth/invalid-credential')m.innerText='❌ كلمة مرور خاطئة';
+            else if(err.code==='auth/user-not-found')m.innerText='❌ لا يوجد حساب';
+            else m.innerText='❌ خطأ: '+err.message;
         }
-        async function doRegister(){
-            const u=document.getElementById('regName').value,e=document.getElementById('regEmail').value,p=document.getElementById('regPass').value,m=document.getElementById('regMsg');
-            if(!u||!e||!p){m.innerText='املأ جميع الحقول';return}
-            if(p.length<6){m.innerText='❌ كلمة المرور 6 أحرف على الأقل';return}
-            m.innerText='';
-            try{
-                const uc=await auth.createUserWithEmailAndPassword(e,p);
-                const avatarUrl=DICEBEAR_URL+'?seed='+uc.user.uid;
-                const coverColor=COVER_COLORS[Math.floor(Math.random()*COVER_COLORS.length)];
-                await db.ref('users/'+uc.user.uid).set({
-                    username:u,email:e,bio:'',avatarUrl:avatarUrl,
-                    hasCustomAvatar:false,coverColor:coverColor,
-                    followers:{},following:{},totalLikes:0,
-                    isVerified:false,createdAt:Date.now()
-                });
-                location.replace('index.html');
-            }catch(err){
-                if(err.code==='auth/email-already-in-use')m.innerText='❌ البريد مستخدم بالفعل';
-                else m.innerText='❌ حدث خطأ';
-            }
+    }
+    
+    // ========== REGISTER ==========
+    async function doRegister(){
+        const u=document.getElementById('regName').value.trim();
+        const e=document.getElementById('regEmail').value.trim();
+        const p=document.getElementById('regPass').value;
+        const m=document.getElementById('regMsg');
+        const b=document.getElementById('btnRegister');
+        if(!u||!e||!p){m.innerText='❌ املأ جميع الحقول';return}
+        if(p.length<6){m.innerText='❌ كلمة المرور 6 أحرف على الأقل';return}
+        b.disabled=true;b.innerHTML='⏳ جاري الإنشاء...';m.innerText='';
+        try{
+            const uc=await auth.createUserWithEmailAndPassword(e,p);
+            const avatarUrl=DICEBEAR_URL+'?seed='+uc.user.uid;
+            const coverColor=COVER_COLORS[Math.floor(Math.random()*COVER_COLORS.length)];
+            await db.ref('users/'+uc.user.uid).set({
+                username:u,email:e,bio:'',avatarUrl:avatarUrl,
+                hasCustomAvatar:false,coverColor:coverColor,
+                followers:{},following:{},totalLikes:0,
+                isVerified:false,createdAt:Date.now()
+            });
+            m.innerText='✅ تم بنجاح!';m.className='msg success';
+            setTimeout(()=>window.location.replace('index.html'),600);
+        }catch(err){
+            b.disabled=false;b.innerHTML='🎨 إنشاء حساب';
+            if(err.code==='auth/email-already-in-use')m.innerText='❌ البريد مستخدم بالفعل';
+            else if(err.code==='auth/weak-password')m.innerText='❌ كلمة مرور ضعيفة';
+            else m.innerText='❌ خطأ: '+err.message;
         }
-        document.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){if(document.getElementById('formLogin').classList.contains('active'))doLogin();else doRegister()}}));
-    </script>
+    }
+    
+    // Enter key
+    document.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+            if(document.getElementById('formLogin').classList.contains('active'))doLogin();
+            else doRegister();
+        }
+    }));
+    
+    // Auto-redirect if logged in
+    auth.onAuthStateChanged(u=>{if(u)window.location.replace('index.html')});
+    console.log('💎 Auth Ready');
+</script>
 </body>
 </html>
