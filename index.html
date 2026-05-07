@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>💎 CRYSTΔL</title>
+    <title>💎 CRYSTΔL | الرئيسية</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -11,88 +11,87 @@
     <style>
         :root{--glass:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--accent:#6366f1;--accent2:#06b6d4;--bg:#050510}
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;height:100vh;overflow:hidden}
-        #loaderScreen{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at top, #1a1a2e, #0f0f1a, #000);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-        .spinner-big{width:48px;height:48px;border:4px solid rgba(99,102,241,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        #mainApp{display:none;height:100vh;position:relative}
-        .topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(5,5,16,0.7);backdrop-filter:blur(30px);border-bottom:1px solid var(--border)}
-        .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+        body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:#fff;height:100vh;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
+        #mainApp{height:100vh;position:relative}
+        
+        /* TOP BAR */
+        .topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(5,5,16,0.7);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-bottom:1px solid var(--border)}
+        .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;box-shadow:0 8px 20px rgba(99,102,241,0.4)}
         .logo-text{font-weight:800;font-size:17px;background:linear-gradient(to bottom,#fff,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-left:8px}
         .tabs{display:flex;gap:4px;background:var(--glass);border-radius:30px;padding:3px}
-        .tab{background:none;border:none;color:rgba(255,255,255,0.5);padding:7px 16px;cursor:pointer;border-radius:25px;font-size:13px;transition:all 0.3s}
+        .tab{background:none;border:none;color:rgba(255,255,255,0.5);padding:7px 16px;cursor:pointer;border-radius:25px;font-size:13px;font-weight:500;transition:all 0.3s}
         .tab.active{background:rgba(99,102,241,0.2);color:#fff}
         .top-icons{display:flex;gap:16px}
-        .top-icon{background:none;border:none;color:rgba(255,255,255,0.7);font-size:18px;cursor:pointer}
-        .videos-wrap{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none}
+        .top-icon{background:none;border:none;color:rgba(255,255,255,0.7);font-size:18px;cursor:pointer;transition:color 0.3s}
+        .top-icon:hover{color:#a5b4fc}
+        
+        /* VIDEOS */
+        .videos-wrap{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;-ms-overflow-style:none}
         .videos-wrap::-webkit-scrollbar{display:none}
         .vid-card{height:100vh;scroll-snap-align:start;position:relative;background:#000}
         .vid-card video{width:100%;height:100%;object-fit:cover}
+        
+        /* INFO */
         .vid-info{position:absolute;bottom:90px;left:14px;right:80px;z-index:20;text-shadow:0 2px 10px rgba(0,0,0,0.8)}
         .author-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-        .author-avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;cursor:pointer;border:2px solid rgba(255,255,255,0.3)}
+        .author-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;border:2px solid rgba(255,255,255,0.3);box-shadow:0 8px 20px rgba(0,0,0,0.4)}
         .author-avatar img{width:100%;height:100%;object-fit:cover}
-        .author-name{font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-        .verified-badge{color:#60a5fa;font-size:14px}
-        .btn-follow{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;border:none;color:#fff;cursor:pointer}
+        .author-name{font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+        .badge{color:#a5b4fc;font-size:12px}
+        .btn-follow{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;border:none;color:#fff;cursor:pointer;box-shadow:0 4px 15px rgba(99,102,241,0.3)}
         .caption{font-size:14px;margin-bottom:5px;line-height:1.4}
         .tag{color:var(--accent2);cursor:pointer;font-weight:500}
         .music{font-size:12px;opacity:0.8;display:flex;align-items:center;gap:6px;cursor:pointer}
+        
+        /* SIDE */
         .side-btns{position:absolute;right:14px;bottom:130px;display:flex;flex-direction:column;gap:22px;z-index:20}
         .sbtn{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#fff;cursor:pointer;font-size:10px;transition:transform 0.15s}
         .sbtn:active{transform:scale(0.85)}
         .sbtn i{font-size:28px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.5))}
         .sbtn.liked i{color:var(--accent)}
-        .nav-bottom{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;background:rgba(5,5,16,0.8);backdrop-filter:blur(30px);z-index:100;border-top:1px solid var(--border)}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:10px;cursor:pointer;text-decoration:none}
+        .sbtn .cnt{font-weight:700;font-size:11px}
+        
+        /* BOTTOM */
+        .nav-bottom{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;background:rgba(5,5,16,0.8);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);z-index:100;border-top:1px solid var(--border)}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:10px;cursor:pointer;transition:all 0.3s}
         .nav-item i{font-size:22px}
-        .btn-add{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-24px;cursor:pointer;border:none;color:#fff;font-size:20px;text-decoration:none}
-        .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(5,5,16,0.9);padding:10px 22px;border-radius:50px;z-index:1000;opacity:0;transition:opacity 0.3s;pointer-events:none;border:1px solid var(--border)}
+        .nav-item.active{color:#a5b4fc}
+        .btn-add{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-24px;cursor:pointer;box-shadow:0 10px 30px rgba(99,102,241,0.5);border:none;color:#fff;font-size:20px}
+        
+        /* HEART */
+        .heart-fly{position:fixed;font-size:80px;color:var(--accent);pointer-events:none;z-index:1000;animation:fly 0.8s ease-out forwards}
+        @keyframes fly{0%{transform:scale(0.5) translateY(0);opacity:1}100%{transform:scale(1.5) translateY(-120px);opacity:0}}
+        
+        /* TOAST */
+        .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(5,5,16,0.9);padding:10px 22px;border-radius:50px;z-index:1000;opacity:0;transition:opacity 0.3s;pointer-events:none;border:1px solid var(--border);font-size:13px}
         .toast.show{opacity:1}
+        
+        /* SPINNER */
+        .spinner{width:32px;height:32px;border:3px solid rgba(99,102,241,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .load-center{display:flex;align-items:center;justify-content:center;height:100vh;gap:10px;flex-direction:column;color:rgba(255,255,255,0.5)}
     </style>
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="loaderScreen">
-    <div class="spinner-big"></div>
-    <p style="color:rgba(255,255,255,0.6);font-size:15px">💎 جاري التحميل...</p>
-</div>
-
-<!-- MAIN APP -->
 <div id="mainApp">
     <!-- TOP BAR -->
     <div class="topbar">
-        <div style="display:flex;align-items:center">
-            <div class="logo-icon">💎</div>
-            <span class="logo-text">CRYSTΔL</span>
-        </div>
-        <div class="tabs">
-            <button class="tab" onclick="switchFeed('following')">متابَعين</button>
-            <button class="tab active" onclick="switchFeed('forYou')">لك</button>
-        </div>
-        <div class="top-icons">
-            <i class="fas fa-search top-icon" onclick="openSearch()"></i>
-            <i class="fas fa-bell top-icon" onclick="openNotifs()"></i>
-        </div>
+        <div style="display:flex;align-items:center"><div class="logo-icon">💎</div><span class="logo-text">CRYSTΔL</span></div>
+        <div class="tabs"><button class="tab" onclick="switchFeed('following')">متابَعين</button><button class="tab active" onclick="switchFeed('forYou')">لك</button></div>
+        <div class="top-icons"><i class="fas fa-search top-icon" onclick="openSearch()"></i><i class="fas fa-bell top-icon" onclick="openNotifs()"></i></div>
     </div>
     
     <!-- VIDEOS -->
-    <div class="videos-wrap" id="videosWrap">
-        <div style="display:flex;align-items:center;justify-content:center;height:100vh;color:rgba(255,255,255,0.5);flex-direction:column;gap:12px">
-            <i class="fas fa-video" style="font-size:48px;opacity:0.3"></i>
-            <p>لا توجد فيديوهات بعد</p>
-            <p style="font-size:12px;opacity:0.5">ارفع أول فيديو!</p>
-        </div>
-    </div>
+    <div class="videos-wrap" id="videosWrap"><div class="load-center"><div class="spinner"></div><span>💎 جاري التحميل...</span></div></div>
     
-    <!-- BOTTOM NAV -->
+    <!-- BOTTOM -->
     <div class="nav-bottom">
-        <button class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></button>
-        <button class="nav-item" onclick="openSearch()"><i class="fas fa-search"></i><span>بحث</span></button>
-        <a href="upload.html" class="btn-add"><i class="fas fa-plus"></i></a>
-        <a href="chat.html" class="nav-item"><i class="fas fa-envelope"></i><span>رسائل</span></a>
-        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>ملفي</span></a>
+        <button class="nav-item active" onclick="navTo('home')"><i class="fas fa-home"></i><span>الرئيسية</span></button>
+        <button class="nav-item" onclick="navTo('search')"><i class="fas fa-search"></i><span>بحث</span></button>
+        <button class="btn-add" onclick="window.location.href='upload.html'"><i class="fas fa-plus"></i></button>
+        <button class="nav-item" onclick="window.location.href='chat.html'"><i class="fas fa-envelope"></i><span>رسائل</span></button>
+        <button class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>ملفي</span></button>
     </div>
     
     <!-- TOAST -->
@@ -100,389 +99,6 @@
 </div>
 
 <script src="firebase-config.js"></script>
-<script>
-    // ========== المتغيرات ==========
-    let currentUser = null;
-    let currentUserData = null;
-    let allUsers = {};
-    let allVideos = [];
-    let isMuted = true;
-    let currentFeed = 'forYou';
-    let currentShareUrl = null;
-    
-    // ========== فحص حالة المستخدم ==========
-    auth.onAuthStateChanged(async (user) => {
-        if (!user) {
-            // غير مسجل - توجيه إلى auth.html
-            window.location.replace('auth.html');
-            return;
-        }
-        
-        // المستخدم مسجل
-        currentUser = user;
-        console.log('🟢 مستخدم مسجل:', user.uid);
-        
-        // تحميل بيانات المستخدم
-        try {
-            const snap = await db.ref('users/' + user.uid).get();
-            if (snap.exists()) {
-                currentUserData = { uid: user.uid, ...snap.val() };
-            }
-        } catch(e) {
-            console.error('خطأ تحميل المستخدم:', e);
-        }
-        
-        // تحميل المستخدمين الآخرين
-        db.ref('users').on('value', s => {
-            allUsers = s.val() || {};
-        });
-        
-        // تحميل الفيديوهات
-        db.ref('videos').on('value', s => {
-            const data = s.val();
-            if (!data) {
-                allVideos = [];
-            } else {
-                allVideos = Object.entries(data)
-                    .map(([k, v]) => ({ id: k, ...v }))
-                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            }
-            renderVideos();
-        });
-        
-        // حالة التواجد
-        db.ref('presence/' + user.uid).set(true);
-        db.ref('presence/' + user.uid).onDisconnect().remove();
-        
-        // إظهار التطبيق
-        document.getElementById('loaderScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        console.log('💎 التطبيق جاهز');
-    });
-    
-    // ========== عرض الفيديوهات ==========
-    function renderVideos() {
-        const c = document.getElementById('videosWrap');
-        if (!c) return;
-        
-        let fv = currentFeed === 'forYou' 
-            ? allVideos 
-            : allVideos.filter(v => currentUserData?.following?.[v.sender]);
-        
-        if (!fv.length) {
-            c.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:center;height:100vh;color:rgba(255,255,255,0.5);flex-direction:column;gap:12px">
-                    <i class="fas fa-video" style="font-size:48px;opacity:0.3"></i>
-                    <p>${currentFeed === 'forYou' ? 'لا توجد فيديوهات بعد' : 'تابع مستخدمين لرؤية فيديوهاتهم'}</p>
-                    <p style="font-size:12px;opacity:0.5">ارفع أول فيديو!</p>
-                </div>`;
-            return;
-        }
-        
-        c.innerHTML = '';
-        
-        fv.forEach(v => {
-            const liked = v.likedBy && v.likedBy[currentUser?.uid];
-            const user = allUsers[v.sender] || { username: v.senderName || 'مستخدم' };
-            const following = currentUserData?.following && currentUserData.following[v.sender];
-            const commentsCount = v.comments ? Object.keys(v.comments).length : 0;
-            const caption = (v.description || '').replace(/#(\w+)/g, '<span class="tag">#$1</span>');
-            const avatarUrl = user.avatarUrl || (DICEBEAR_URL + '?seed=' + v.sender);
-            
-            const div = document.createElement('div');
-            div.className = 'vid-card';
-            div.innerHTML = `
-                <video loop playsinline muted data-src="${v.url}" poster="${v.thumbnail || ''}"></video>
-                <div class="vid-info">
-                    <div class="author-row">
-                        <div class="author-avatar" onclick="window.location.href='profile.html'">
-                            <img src="${avatarUrl}" alt="avatar">
-                        </div>
-                        <div class="author-name">
-                            <span onclick="window.location.href='profile.html'">@${user.username}</span>
-                            ${user.isVerified ? '<span class="verified-badge">✅</span>' : ''}
-                            ${currentUser?.uid !== v.sender ? 
-                                `<button class="btn-follow" onclick="toggleFollow('${v.sender}', this)">${following ? 'متابع' : 'متابعة'}</button>` 
-                                : ''}
-                        </div>
-                    </div>
-                    <div class="caption">${caption}</div>
-                    <div class="music"><i class="fas fa-music"></i> ${v.music || 'Original Sound'}</div>
-                </div>
-                <div class="side-btns">
-                    <button class="sbtn" onclick="toggleMute()">
-                        <i class="fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'}"></i>
-                    </button>
-                    <button class="sbtn like-btn ${liked ? 'liked' : ''}" onclick="toggleLike('${v.id}', this)">
-                        <i class="fas fa-heart"></i>
-                        <span>${v.likes || 0}</span>
-                    </button>
-                    <button class="sbtn" onclick="openComments('${v.id}')">
-                        <i class="fas fa-comment"></i>
-                        <span>${commentsCount}</span>
-                    </button>
-                    <button class="sbtn" onclick="openShare('${v.url}')">
-                        <i class="fas fa-share"></i>
-                    </button>
-                </div>`;
-            
-            const videoEl = div.querySelector('video');
-            videoEl.addEventListener('dblclick', e => {
-                e.stopPropagation();
-                const likeBtn = div.querySelector('.like-btn');
-                if (likeBtn) toggleLike(v.id, likeBtn);
-            });
-            
-            c.appendChild(div);
-        });
-        
-        initVideoObserver();
-    }
-    
-    // ========== مراقب الفيديوهات ==========
-    function initVideoObserver() {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                const video = entry.target.querySelector('video');
-                if (entry.isIntersecting) {
-                    if (!video.src) video.src = video.dataset.src;
-                    video.muted = isMuted;
-                    video.play().catch(() => {});
-                } else {
-                    video.pause();
-                }
-            });
-        }, { threshold: 0.65 });
-        
-        document.querySelectorAll('.vid-card').forEach(seg => observer.observe(seg));
-    }
-    
-    // ========== كتم الصوت ==========
-    function toggleMute() {
-        isMuted = !isMuted;
-        document.querySelectorAll('video').forEach(v => v.muted = isMuted);
-    }
-    
-    // ========== تبديل التبويب ==========
-    function switchFeed(feed) {
-        currentFeed = feed;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-        renderVideos();
-    }
-    
-    // ========== الإعجاب ==========
-    async function toggleLike(videoId, btn) {
-        if (!currentUser) return;
-        
-        const videoRef = db.ref('videos/' + videoId);
-        const snap = await videoRef.get();
-        const video = snap.val();
-        if (!video) return;
-        
-        let likes = video.likes || 0;
-        let likedBy = video.likedBy || {};
-        
-        if (likedBy[currentUser.uid]) {
-            likes--;
-            delete likedBy[currentUser.uid];
-        } else {
-            likes++;
-            likedBy[currentUser.uid] = true;
-        }
-        
-        await videoRef.update({ likes, likedBy });
-        btn.classList.toggle('liked');
-        const countSpan = btn.querySelector('span');
-        if (countSpan) countSpan.innerText = likes;
-    }
-    
-    // ========== المتابعة ==========
-    async function toggleFollow(userId, btn) {
-        if (!currentUser || currentUser.uid === userId) return;
-        
-        const userRef = db.ref('users/' + currentUser.uid + '/following/' + userId);
-        const targetRef = db.ref('users/' + userId + '/followers/' + currentUser.uid);
-        const snap = await userRef.get();
-        
-        if (snap.exists()) {
-            await userRef.remove();
-            await targetRef.remove();
-            btn.innerText = 'متابعة';
-        } else {
-            await userRef.set(true);
-            await targetRef.set(true);
-            btn.innerText = 'متابع';
-        }
-    }
-    
-    // ========== المشاركة ==========
-    function openShare(url) {
-        currentShareUrl = url;
-        const overlayId = 'shareOverlay_' + Date.now();
-        const html = `
-            <div id="${overlayId}" style="position:fixed;inset:0;background:rgba(5,5,16,0.97);backdrop-filter:blur(40px);z-index:400;overflow-y:auto">
-                <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;background:rgba(5,5,16,0.8)">
-                    <h3 style="font-weight:700">📤 مشاركة</h3>
-                    <button onclick="document.getElementById('${overlayId}').remove()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px"><i class="fas fa-times"></i></button>
-                </div>
-                <div style="padding:16px">
-                    <div onclick="copyLink('${overlayId}')" style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer">
-                        <i class="fas fa-link" style="color:#6366f1;font-size:20px"></i><span>نسخ الرابط</span>
-                    </div>
-                    <div onclick="shareWA('${overlayId}')" style="display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer">
-                        <i class="fab fa-whatsapp" style="color:#25D366;font-size:20px"></i><span>WhatsApp</span>
-                    </div>
-                </div>
-            </div>`;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-    
-    window.copyLink = function(overlayId) {
-        navigator.clipboard.writeText(currentShareUrl);
-        const toast = document.getElementById('toast');
-        if (toast) {
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-        document.getElementById(overlayId).remove();
-    };
-    
-    window.shareWA = function(overlayId) {
-        window.open('https://wa.me/?text=' + encodeURIComponent(currentShareUrl), '_blank');
-        document.getElementById(overlayId).remove();
-    };
-    
-    // ========== التعليقات ==========
-    async function openComments(videoId) {
-        const snap = await db.ref('videos/' + videoId + '/comments').get();
-        const comments = snap.val() || {};
-        
-        const overlayId = 'commentsOverlay_' + Date.now();
-        let commentsHtml = '';
-        
-        Object.values(comments).reverse().forEach(c => {
-            const user = allUsers[c.userId] || { username: c.username || 'مستخدم' };
-            const userAvatar = user.avatarUrl || (DICEBEAR_URL + '?seed=' + c.userId);
-            commentsHtml += `
-                <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
-                    <img src="${userAvatar}" style="width:36px;height:36px;border-radius:50%">
-                    <div>
-                        <div style="font-weight:600">@${user.username}</div>
-                        <div style="font-size:13px;opacity:0.8;margin-top:2px">${c.text}</div>
-                    </div>
-                </div>`;
-        });
-        
-        const html = `
-            <div id="${overlayId}" style="position:fixed;inset:0;background:rgba(5,5,16,0.97);backdrop-filter:blur(40px);z-index:400;overflow-y:auto">
-                <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;background:rgba(5,5,16,0.8)">
-                    <h3 style="font-weight:700">💬 التعليقات</h3>
-                    <button onclick="document.getElementById('${overlayId}').remove()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px"><i class="fas fa-times"></i></button>
-                </div>
-                <div style="padding:16px">${commentsHtml}</div>
-                <div style="display:flex;gap:8px;padding:12px;background:rgba(5,5,16,0.9);position:sticky;bottom:0">
-                    <input type="text" id="cmtInput_${overlayId}" placeholder="أضف تعليقاً..." style="flex:1;padding:12px 16px;border-radius:30px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:14px;outline:none">
-                    <button onclick="addComment('${videoId}', '${overlayId}')" style="background:linear-gradient(135deg,#6366f1,#06b6d4);border:none;color:#fff;padding:12px 20px;border-radius:30px;font-weight:700;cursor:pointer;white-space:nowrap">نشر</button>
-                </div>
-            </div>`;
-        
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-    
-    window.addComment = async function(videoId, overlayId) {
-        const input = document.getElementById('cmtInput_' + overlayId);
-        if (!input || !input.value.trim()) return;
-        
-        await db.ref('videos/' + videoId + '/comments').push({
-            userId: currentUser.uid,
-            username: currentUserData?.username || 'مستخدم',
-            text: input.value,
-            timestamp: Date.now()
-        });
-        
-        const overlay = document.getElementById(overlayId);
-        if (overlay) overlay.remove();
-        
-        openComments(videoId);
-    };
-    
-    // ========== البحث ==========
-    function openSearch() {
-        const overlayId = 'searchOverlay_' + Date.now();
-        const html = `
-            <div id="${overlayId}" style="position:fixed;inset:0;background:rgba(5,5,16,0.97);backdrop-filter:blur(40px);z-index:400;overflow-y:auto">
-                <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08)">
-                    <h3 style="font-weight:700">🔍 بحث</h3>
-                    <button onclick="document.getElementById('${overlayId}').remove()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px"><i class="fas fa-times"></i></button>
-                </div>
-                <div style="padding:16px">
-                    <input type="text" id="searchQ_${overlayId}" onkeyup="doSearch('${overlayId}')" placeholder="ابحث عن مستخدمين، فيديوهات..." style="width:100%;padding:14px 18px;border-radius:30px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:14px;outline:none;margin-bottom:16px">
-                    <div id="searchR_${overlayId}"></div>
-                </div>
-            </div>`;
-        document.body.insertAdjacentHTML('beforeend', html);
-        
-        window.doSearch = function(oid) {
-            const q = document.getElementById('searchQ_' + oid).value.toLowerCase();
-            const rd = document.getElementById('searchR_' + oid);
-            if (!q) { rd.innerHTML = ''; return; }
-            
-            const users = Object.values(allUsers).filter(u => u.username?.toLowerCase().includes(q));
-            const vids = allVideos.filter(v => (v.description || '').toLowerCase().includes(q));
-            
-            rd.innerHTML = `
-                ${users.length ? `
-                    <div style="margin-bottom:16px">
-                        <h4 style="font-size:12px;opacity:0.5;margin-bottom:8px">👥 مستخدمين</h4>
-                        ${users.map(u => `
-                            <div onclick="window.location.href='profile.html'" style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer">
-                                <img src="${u.avatarUrl || (DICEBEAR_URL + '?seed=' + (u.uid || u.username))}" style="width:40px;height:40px;border-radius:50%">
-                                <div>@${u.username} ${u.isVerified ? '<span class="verified-badge">✅</span>' : ''}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-                ${vids.length ? `
-                    <div>
-                        <h4 style="font-size:12px;opacity:0.5;margin-bottom:8px">🎬 فيديوهات</h4>
-                        ${vids.map(v => `
-                            <div onclick="window.open('${v.url}', '_blank')" style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer">
-                                <i class="fas fa-play-circle" style="color:#6366f1;font-size:20px"></i>
-                                <span style="font-size:13px">${(v.description || 'فيديو').substring(0, 40)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-                ${!users.length && !vids.length ? '<div style="text-align:center;opacity:0.5;padding:30px">لا توجد نتائج</div>' : ''}
-            `;
-        };
-        
-        // تركيز على حقل البحث
-        setTimeout(() => {
-            const searchInput = document.getElementById('searchQ_' + overlayId);
-            if (searchInput) searchInput.focus();
-        }, 300);
-    }
-    
-    // ========== الإشعارات ==========
-    function openNotifs() {
-        const overlayId = 'notifsOverlay_' + Date.now();
-        const html = `
-            <div id="${overlayId}" style="position:fixed;inset:0;background:rgba(5,5,16,0.97);backdrop-filter:blur(40px);z-index:400;overflow-y:auto">
-                <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08)">
-                    <h3 style="font-weight:700">🔔 الإشعارات</h3>
-                    <button onclick="document.getElementById('${overlayId}').remove()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px"><i class="fas fa-times"></i></button>
-                </div>
-                <div style="padding:16px;text-align:center;opacity:0.5;padding:40px">
-                    <i class="fas fa-bell" style="font-size:48px;margin-bottom:12px;display:block"></i>
-                    <p>لا توجد إشعارات حالياً</p>
-                </div>
-            </div>`;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-    
-    console.log('💎 CRYSTΔL Index Ready');
-</script>
+<script src="script.js"></script>
 </body>
 </html>
